@@ -84,7 +84,7 @@ public class MediaVideoEncoder extends MediaEncoder {
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);    // API >= 18
         format.setInteger(MediaFormat.KEY_BIT_RATE, calcBitRate());
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
-        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 6);
+        format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 1);
         if (DEBUG) Log.i(TAG, "format: " + format);
 
         mMediaCodec = MediaCodec.createEncoderByType(MIME_TYPE);
@@ -215,7 +215,9 @@ public class MediaVideoEncoder extends MediaEncoder {
 
     @Override
     protected void signalEndOfInputStream() {
-        if (DEBUG) Log.d(TAG, "sending EOS to encoder");
+        if (DEBUG) {
+            Log.d(TAG, "sending EOS to encoder");
+        }
         mMediaCodec.signalEndOfInputStream();    // API >= 18
         mIsEOS = true;
     }
@@ -226,8 +228,12 @@ public class MediaVideoEncoder extends MediaEncoder {
     }
 
     public float[] getMvpMatrix() {
-        if (previewW < 1 || previewH < 1) return null;
-        if (isMatrixCalc) return mvpMatrix;
+        if (previewW < 1 || previewH < 1) {
+            return null;
+        }
+        if (isMatrixCalc) {
+            return mvpMatrix;
+        }
 
         float encodeWHRatio = mWidth * 1.0f / mHeight;
         float previewWHRatio = previewW * 1.0f / previewH;
