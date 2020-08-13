@@ -253,7 +253,8 @@ public class RESHardVideoCore implements RESVideoCore {
     }
 
 
-    public void setMirror(boolean isEnableMirror,boolean isEnablePreviewMirror,boolean isEnableStreamMirror) {
+    @Override
+    public void setMirror(boolean isEnableMirror, boolean isEnablePreviewMirror, boolean isEnableStreamMirror) {
             this.isEnableMirror = isEnableMirror;
             this.isEnablePreviewMirror = isEnablePreviewMirror;
             this.isEnableStreamMirror = isEnableStreamMirror;
@@ -840,7 +841,6 @@ public class RESHardVideoCore implements RESVideoCore {
                         mVideoEncoder.setEglContext(EGL14.eglGetCurrentContext(), videoGLHander.getBufferTexture());
                         mNeedResetEglContext = false;
                     }
-                    mVideoEncoder.setPreviewWH(resCoreParameters.previewVideoHeight, resCoreParameters.previewVideoWidth);
                     mVideoEncoder.frameAvailableSoon(textureMatrix, mVideoEncoder.getMvpMatrix());
                 }
             }
@@ -853,10 +853,12 @@ public class RESHardVideoCore implements RESVideoCore {
     private boolean mNeedResetEglContext = true;
     private int mCameraId = -1;
 
+    @Override
     public void setVideoEncoder(final MediaVideoEncoder encoder) {
                 synchronized (this) {
                     if (encoder != null) {
                         encoder.setEglContext(EGL14.eglGetCurrentContext(), videoGLHander.getBufferTexture());
+                        encoder.setPreviewWH(resCoreParameters.previewVideoWidth, resCoreParameters.previewVideoHeight);
                     }
                     mVideoEncoder = encoder;
                 }
@@ -878,6 +880,7 @@ public class RESHardVideoCore implements RESVideoCore {
         return;
     }
 
+    @Override
     public void setNeedResetEglContext(boolean bol){
         mNeedResetEglContext = bol;
     }
