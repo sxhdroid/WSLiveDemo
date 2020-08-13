@@ -504,7 +504,7 @@ public class RESHardVideoCore implements RESVideoCore {
 
             //encoder mp4 end
             GLES20.glUniformMatrix4fv(offScreenGLWapper.cam2dTextureMatrix, 1, false, textureMatrix, 0);
-            GLES20.glViewport(0, 0, resCoreParameters.previewVideoHeight, resCoreParameters.previewVideoWidth);//resCoreParameters.videoWidth, resCoreParameters.videoHeight
+            GLES20.glViewport(0, 0, resCoreParameters.previewVideoWidth, resCoreParameters.previewVideoHeight);//resCoreParameters.videoWidth, resCoreParameters.videoHeight
             doGLDraw();
             GLES20.glFinish();
             GLHelper.disableVertex(offScreenGLWapper.cam2dPostionLoc, offScreenGLWapper.cam2dTextureCoordLoc);
@@ -523,7 +523,7 @@ public class RESHardVideoCore implements RESVideoCore {
                 GLHelper.enableVertex(offScreenGLWapper.camPostionLoc, offScreenGLWapper.camTextureCoordLoc,
                         shapeVerticesBuffer, cameraTextureVerticesBuffer);
             }
-            GLES20.glViewport(0, 0, resCoreParameters.previewVideoHeight, resCoreParameters.previewVideoWidth);
+            GLES20.glViewport(0, 0, resCoreParameters.previewVideoWidth, resCoreParameters.previewVideoHeight);
             doGLDraw();
             GLES20.glFinish();
             GLHelper.disableVertex(offScreenGLWapper.camPostionLoc, offScreenGLWapper.camTextureCoordLoc);
@@ -543,7 +543,7 @@ public class RESHardVideoCore implements RESVideoCore {
                     }
                     innerVideoFilter = videoFilter;
                     if (innerVideoFilter != null) {
-                        innerVideoFilter.onInit(resCoreParameters.previewVideoHeight, resCoreParameters.previewVideoWidth);//resCoreParameters.videoWidth, resCoreParameters.videoHeight
+                        innerVideoFilter.onInit(resCoreParameters.previewVideoWidth, resCoreParameters.previewVideoHeight);//resCoreParameters.videoWidth, resCoreParameters.videoHeight
                     }
                 }
                 if (innerVideoFilter != null) {
@@ -634,13 +634,13 @@ public class RESHardVideoCore implements RESVideoCore {
                     Bitmap result = null;
                     try {
                         IntBuffer pixBuffer = IntBuffer.allocate(resCoreParameters.previewVideoHeight * resCoreParameters.previewVideoWidth);
-                        GLES20.glReadPixels(0, 0, resCoreParameters.previewVideoHeight, resCoreParameters.previewVideoWidth, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixBuffer);
+                        GLES20.glReadPixels(0, 0, resCoreParameters.previewVideoWidth, resCoreParameters.previewVideoHeight, GLES20.GL_RGBA, GLES20.GL_UNSIGNED_BYTE, pixBuffer);
                         int[] glPixel = pixBuffer.array();
                         int[] argbPixel = new int[resCoreParameters.previewVideoHeight * resCoreParameters.previewVideoWidth];
-                        ColorHelper.FIXGLPIXEL(glPixel, argbPixel, resCoreParameters.previewVideoHeight, resCoreParameters.previewVideoWidth);
+                        ColorHelper.FIXGLPIXEL(glPixel, argbPixel, resCoreParameters.previewVideoWidth, resCoreParameters.previewVideoHeight);
                         result = Bitmap.createBitmap(argbPixel,
-                                resCoreParameters.previewVideoHeight,
                                 resCoreParameters.previewVideoWidth,
+                                resCoreParameters.previewVideoHeight,
                                 Bitmap.Config.ARGB_8888);
 
                         if(isEnableMirror && isEnablePreviewMirror){
@@ -677,10 +677,10 @@ public class RESHardVideoCore implements RESVideoCore {
                 offScreenGLWapper.cam2dTextureCoordLoc = GLES20.glGetAttribLocation(offScreenGLWapper.cam2dProgram, "aTextureCoord");
                 offScreenGLWapper.cam2dTextureMatrix = GLES20.glGetUniformLocation(offScreenGLWapper.cam2dProgram, "uTextureMatrix");
                 int[] fb = new int[1], fbt = new int[1];
-                GLHelper.createCamFrameBuff(fb, fbt, resCoreParameters.previewVideoHeight, resCoreParameters.previewVideoWidth);//resCoreParameters.videoWidth, resCoreParameters.videoHeight
+                GLHelper.createCamFrameBuff(fb, fbt, resCoreParameters.previewVideoWidth, resCoreParameters.previewVideoHeight);//resCoreParameters.videoWidth, resCoreParameters.videoHeight
                 sample2DFrameBuffer = fb[0];
                 sample2DFrameBufferTexture = fbt[0];
-                GLHelper.createCamFrameBuff(fb, fbt, resCoreParameters.previewVideoHeight, resCoreParameters.previewVideoWidth);//resCoreParameters.videoWidth, resCoreParameters.videoHeight
+                GLHelper.createCamFrameBuff(fb, fbt, resCoreParameters.previewVideoWidth, resCoreParameters.previewVideoHeight);//resCoreParameters.videoWidth, resCoreParameters.videoHeight
                 frameBuffer = fb[0];
                 frameBufferTexture = fbt[0];
             } else {
