@@ -50,7 +50,6 @@ public class StreamConfig {
         res.setVideoGOP(option.videoGOP);
         res.setDefaultCamera(option.cameraIndex);
         res.setRtmpAddr(option.streamUrl);
-        res.setBackCameraDirectionMode(RESConfig.DirectionMode.FLAG_DIRECTION_ROATATION_0);
         return res;
     }
 
