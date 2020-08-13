@@ -236,18 +236,18 @@ public abstract class MediaEncoder implements Runnable {
         final ByteBuffer[] inputBuffers = mMediaCodec.getInputBuffers();
         while (mIsCapturing) {
 	        final int inputBufferIndex = mMediaCodec.dequeueInputBuffer(TIMEOUT_USEC);
-			Log.e(TAG, "inputBufferIndex: "+inputBufferIndex );
+//			Log.e(TAG, "inputBufferIndex: "+inputBufferIndex );
 			if (inputBufferIndex >= 0) {
 	            final ByteBuffer inputBuffer = inputBuffers[inputBufferIndex];
 	            inputBuffer.clear();
 	            if (buffer != null) {
 	            	inputBuffer.put(buffer);
 	            }
-	            if (DEBUG) Log.v(TAG, "encode:queueInputBuffer");
+//	            if (DEBUG) Log.v(TAG, "encode:queueInputBuffer");
 	            if (length <= 0) {
 	            	// send EOS
 	            	mIsEOS = true;
-	            	if (DEBUG) Log.i(TAG, "send BUFFER_FLAG_END_OF_STREAM");
+//	            	if (DEBUG) Log.i(TAG, "send BUFFER_FLAG_END_OF_STREAM");
 	            	mMediaCodec.queueInputBuffer(inputBufferIndex, 0, 0,
 	            		presentationTimeUs, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
 		            break;
@@ -270,7 +270,7 @@ public abstract class MediaEncoder implements Runnable {
     protected void drain() {
     	if (mMediaCodec == null) return;
         ByteBuffer[] encoderOutputBuffers = mMediaCodec.getOutputBuffers();
-		Log.e(TAG, "encoderOutputBuffers: "+encoderOutputBuffers.length );
+//		Log.e(TAG, "encoderOutputBuffers: "+encoderOutputBuffers.length );
 		int encoderStatus, count = 0;
         final MediaMuxerWrapper muxer = mWeakMuxer.get();
         if (muxer == null) {
@@ -278,11 +278,11 @@ public abstract class MediaEncoder implements Runnable {
         	Log.w(TAG, "muxer is unexpectedly null");
         	return;
         }
-		Log.e(TAG, "mIsCapturing: "+mIsCapturing );
+//		Log.e(TAG, "mIsCapturing: "+mIsCapturing );
 LOOP:	while (mIsCapturing) {
 			// get encoded data with maximum timeout duration of TIMEOUT_USEC(=10[msec])
             encoderStatus = mMediaCodec.dequeueOutputBuffer(mBufferInfo, TIMEOUT_USEC);
-	Log.e(TAG, "encoderStatus: "+encoderStatus );
+//	Log.e(TAG, "encoderStatus: "+encoderStatus );
 	if (encoderStatus == MediaCodec.INFO_TRY_AGAIN_LATER) {
                 // wait 5 counts(=TIMEOUT_USEC x 5 = 50msec) until data/EOS come
                 if (!mIsEOS) {
