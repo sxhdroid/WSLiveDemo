@@ -2,7 +2,6 @@ package me.lake.librestreaming.ws;
 
 import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.hardware.Camera;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,7 +23,6 @@ import me.lake.librestreaming.encoder.MediaVideoEncoder;
 import me.lake.librestreaming.filter.hardvideofilter.BaseHardVideoFilter;
 import me.lake.librestreaming.model.RESConfig;
 import me.lake.librestreaming.model.Size;
-import me.lake.librestreaming.tools.CameraUtil;
 import me.lake.librestreaming.ws.filter.audiofilter.SetVolumeAudioFilter;
 
 /**
@@ -69,7 +67,6 @@ public class StreamLiveCameraView extends FrameLayout {
         if (avOption == null) {
             throw new IllegalArgumentException("AVOption is null.");
         }
-        compatibleSize(avOption);
         resClient = getRESClient();
         setContext(mContext);
         resConfig = StreamConfig.build(context,avOption);
@@ -80,19 +77,6 @@ public class StreamLiveCameraView extends FrameLayout {
         }
         initPreviewTextureView();
         addListenerAndFilter();
-    }
-
-    private void compatibleSize(StreamAVOption avOptions) {
-        Camera.Size cameraSize = CameraUtil.getInstance().getBestSize(CameraUtil.getFrontCameraSize(),Integer.parseInt("800"));
-        if(!CameraUtil.hasSupportedFrontVideoSizes){
-            if(null == cameraSize || cameraSize.width <= 0){
-                avOptions.videoWidth = 720;
-                avOptions.videoHeight = 480;
-            }else{
-                avOptions.videoWidth = cameraSize.width;
-                avOptions.videoHeight = cameraSize.height;
-            }
-        }
     }
 
     private void initPreviewTextureView() {
@@ -389,14 +373,16 @@ public class StreamLiveCameraView extends FrameLayout {
     MediaEncoder.MediaEncoderListener mMediaEncoderListener = new MediaEncoder.MediaEncoderListener() {
         @Override
         public void onPrepared(final MediaEncoder encoder) {
-            if (encoder instanceof MediaVideoEncoder && resClient != null)
+            if (encoder instanceof MediaVideoEncoder && resClient != null) {
                 resClient.setVideoEncoder((MediaVideoEncoder) encoder);
+            }
         }
 
         @Override
         public void onStopped(final MediaEncoder encoder) {
-            if (encoder instanceof MediaVideoEncoder && resClient != null)
+            if (encoder instanceof MediaVideoEncoder && resClient != null) {
                 resClient.setVideoEncoder(null);
+            }
         }
     };
 }
