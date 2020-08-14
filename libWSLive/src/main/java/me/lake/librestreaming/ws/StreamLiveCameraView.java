@@ -138,7 +138,8 @@ public class StreamLiveCameraView extends FrameLayout {
         if(resClient != null){
             resClient.setNeedResetEglContext(true);
             try {
-                mMuxer = new MediaMuxerWrapper(".mp4");    // if you record audio only, ".m4a" is also OK.
+                // if you record audio only, ".m4a" is also OK.
+                mMuxer = new MediaMuxerWrapper(".mp4");
                 new MediaVideoEncoder(mMuxer, mMediaEncoderListener, StreamAVOption.recordVideoWidth, StreamAVOption.recordVideoHeight);
                 new MediaAudioEncoder(mMuxer, mMediaEncoderListener);
 
@@ -160,10 +161,8 @@ public class StreamLiveCameraView extends FrameLayout {
             String path = mMuxer.getFilePath();
             mMuxer.stopRecording();
             mMuxer = null;
-            System.gc();
             return path;
         }
-        System.gc();
         return null;
     }
 
