@@ -21,6 +21,7 @@ import me.lake.librestreaming.model.Size;
 import me.lake.librestreaming.rtmp.RESFlvDataCollecter;
 import me.lake.librestreaming.tools.BuffSizeCalculator;
 import me.lake.librestreaming.tools.LogTools;
+import me.lake.librestreaming.ws.StreamConfig;
 
 
 public class RESVideoClient {
@@ -37,7 +38,7 @@ public class RESVideoClient {
     public RESVideoClient(RESCoreParameters parameters) {
         resCoreParameters = parameters;
         cameraNum = Camera.getNumberOfCameras();
-        currentCameraIndex = Camera.CameraInfo.CAMERA_FACING_BACK;
+        currentCameraIndex = StreamConfig.AVOptionsHolder.DEFAULT_CAMERA_INDEX;
         isStreaming = false;
         isPreviewing = false;
     }
