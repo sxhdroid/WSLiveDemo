@@ -42,6 +42,10 @@ public class StreamLiveCameraView extends FrameLayout {
     private static int quality_value_min = 400 * 1024;
     private static int quality_value_max = 700 * 1024;
 
+    private MediaRecordCallBack callBack;
+
+    private boolean isRecordingSegment;
+
     public StreamLiveCameraView(Context context) {
         super(context);
         this.mContext=context;
@@ -152,13 +156,20 @@ public class StreamLiveCameraView extends FrameLayout {
             }
         }
     }
+
+    public void stopSegmentRecord() {
+        isRecordingSegment = true;
+        mMuxer.stopRecordingSegment();
+    }
+
     /**
      * 停止录制
      */
     public String stopRecord() {
         isRecord = false;
+        isRecordingSegment = false;
         if (mMuxer != null) {
-            String path = mMuxer.getFilePath();
+            String path = mMuxer.getOutputPath();
             mMuxer.stopRecording();
             mMuxer = null;
             return path;
@@ -299,6 +310,10 @@ public class StreamLiveCameraView extends FrameLayout {
         }
     }
 
+    public void setMediaRecordCallBack(MediaRecordCallBack callBack) {
+        this.callBack = callBack;
+    }
+
     RESConnectionListener ConnectionListener =new RESConnectionListener() {
         @Override
         public void onOpenConnectionResult(int result) {
@@ -369,7 +384,7 @@ public class StreamLiveCameraView extends FrameLayout {
     /**
      * callback methods from encoder
      */
-    MediaEncoder.MediaEncoderListener mMediaEncoderListener = new MediaEncoder.MediaEncoderListener() {
+    private MediaEncoder.MediaEncoderListener mMediaEncoderListener = new MediaEncoder.MediaEncoderListener() {
         @Override
         public void onPrepared(final MediaEncoder encoder) {
             if (encoder instanceof MediaVideoEncoder && resClient != null) {
@@ -378,10 +393,45 @@ public class StreamLiveCameraView extends FrameLayout {
         }
 
         @Override
+        public void onStart(MediaEncoder encoder) {
+            if (isRecordingSegment || callBack == null) {
+                return;
+            }
+            if (encoder instanceof MediaVideoEncoder) {
+                callBack.onStart();
+            }
+        }
+
+        @Override
         public void onStopped(final MediaEncoder encoder) {
-            if (encoder instanceof MediaVideoEncoder && resClient != null) {
-                resClient.setVideoEncoder(null);
+            if (encoder instanceof MediaVideoEncoder) {
+                if (resClient != null && !isRecordingSegment) {
+                    resClient.setVideoEncoder(null);
+                }
+                if (callBack != null) {
+                    callBack.onStop(encoder.getOutputPath(), isRecordingSegment);
+                }
+                // 自动录制下一个片段
+                if (isRecordingSegment) {
+                    mMuxer.resetOutputPath(null);
+                    mMuxer.startRecording();
+                }
             }
         }
     };
+
+    public interface MediaRecordCallBack {
+        /**
+         * 录制开始回调
+         */
+        void onStart();
+
+        /**
+         * 录制停止回调
+         *
+         * @param filePath  文件路径
+         * @param isSegment 是否是分段自动停止
+         */
+        void onStop(String filePath, boolean isSegment);
+    }
 }

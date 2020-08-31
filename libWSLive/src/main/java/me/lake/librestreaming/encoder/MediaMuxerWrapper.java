@@ -18,7 +18,7 @@ public class MediaMuxerWrapper {
 	private static final boolean DEBUG = false;	// TODO set false on release
 	private static final String TAG = "MediaMuxerWrapper";
 
-    private static final SimpleDateFormat mDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.US);
+    private static final SimpleDateFormat mDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
 	private String mOutputPath;
 	private final MediaMuxer mMediaMuxer;	// API >= 18
@@ -32,6 +32,13 @@ public class MediaMuxerWrapper {
 	 * @throws IOException
 	 */
 	public MediaMuxerWrapper(String ext) throws IOException {
+		resetOutputPath(ext);
+		mMediaMuxer = new MediaMuxer(mOutputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
+		mEncoderCount = mStatredCount = 0;
+		mIsStarted = false;
+	}
+
+	public void resetOutputPath(String ext) {
 		if (TextUtils.isEmpty(ext)) {
 			ext = ".mp4";
 		}
@@ -41,9 +48,6 @@ public class MediaMuxerWrapper {
 		} catch (NullPointerException e) {
 			throw new RuntimeException("This app has no permission of writing external storage");
 		}
-		mMediaMuxer = new MediaMuxer(mOutputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
-		mEncoderCount = mStatredCount = 0;
-		mIsStarted = false;
 	}
 
 	public String getOutputPath() {
@@ -65,6 +69,15 @@ public class MediaMuxerWrapper {
 		}
 		if (mAudioEncoder != null) {
 			mAudioEncoder.startRecording();
+		}
+	}
+
+	public void stopRecordingSegment() {
+		if (mVideoEncoder != null) {
+			mVideoEncoder.stopRecording();
+		}
+		if (mAudioEncoder != null) {
+			mAudioEncoder.stopRecording();
 		}
 	}
 
@@ -182,7 +195,6 @@ public class MediaMuxerWrapper {
      */
     private File getCaptureFile(final String type, final String ext) {
 		final File dir = Environment.getExternalStoragePublicDirectory(type);
-		Log.d(TAG, "path=" + dir.toString());
 		if (dir.exists() || dir.mkdir()) {
 			if (dir.canWrite()) {
 				return new File(dir, getDateTimeString() + ext);
@@ -199,9 +211,4 @@ public class MediaMuxerWrapper {
     	final GregorianCalendar now = new GregorianCalendar();
     	return mDateTimeFormat.format(now.getTime());
     }
-
-    public String getFilePath(){
-		return mOutputPath;
-	}
-
 }

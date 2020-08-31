@@ -17,7 +17,7 @@ public class StreamConfig {
 
     public static class AVOptionsHolder {
 
-        public static final int DEFAULT_CAMERA_INDEX = Camera.CameraInfo.CAMERA_FACING_FRONT;
+        public static final int DEFAULT_CAMERA_INDEX = Camera.CameraInfo.CAMERA_FACING_BACK;
 
         public static final int DEFAULT_FILTER_MODE = RESConfig.FilterMode.HARD;
 
