@@ -35,5 +35,5 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
+    api 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
 }
