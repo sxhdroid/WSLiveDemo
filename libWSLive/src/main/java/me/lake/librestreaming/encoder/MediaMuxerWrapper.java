@@ -14,14 +14,17 @@ import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import me.lake.librestreaming.BuildConfig;
+
 public class MediaMuxerWrapper {
-	private static final boolean DEBUG = false;	// TODO set false on release
+	private static final boolean DEBUG = BuildConfig.DEBUG;
 	private static final String TAG = "MediaMuxerWrapper";
 
     private static final SimpleDateFormat mDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
 	private String mOutputPath;
-	private final MediaMuxer mMediaMuxer;	// API >= 18
+	// API >= 18
+	private final MediaMuxer mMediaMuxer;
 	private int mEncoderCount, mStatredCount;
 	private boolean mIsStarted;
 	private MediaEncoder mVideoEncoder, mAudioEncoder;
@@ -207,7 +210,7 @@ public class MediaMuxerWrapper {
      * get current date and time as String
      * @return
      */
-    private static final String getDateTimeString() {
+    private static String getDateTimeString() {
     	final GregorianCalendar now = new GregorianCalendar();
     	return mDateTimeFormat.format(now.getTime());
     }
