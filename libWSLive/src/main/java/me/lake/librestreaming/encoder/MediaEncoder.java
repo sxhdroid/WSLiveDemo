@@ -340,12 +340,14 @@ LOOP:	while (mIsCapturing) {
                	mTrackIndex = muxer.addTrack(format);
                	mMuxerStarted = true;
                	if (!muxer.start()) {
-               		// we should wait until muxer is ready
-					while (!muxer.isStarted()) {
-						try {
-							muxer.wait(100);
-						} catch (final InterruptedException e) {
-							break LOOP;
+               		synchronized (muxer) {
+						// we should wait until muxer is ready
+						while (!muxer.isStarted()) {
+							try {
+								muxer.wait(100);
+							} catch (final InterruptedException e) {
+								break LOOP;
+							}
 						}
 					}
                	}
