@@ -19,6 +19,7 @@ public class RESAudioClient {
     private AudioRecord audioRecord;
     private byte[] audioBuffer;
     private RESSoftAudioCore softAudioCore;
+    private boolean mIsMute;
 
     public RESAudioClient(RESCoreParameters parameters) {
         resCoreParameters = parameters;
@@ -77,9 +78,24 @@ public class RESAudioClient {
             return true;
         }
     }
+
+    public void toggleMute() {
+        mIsMute = !mIsMute;
+        if (mIsMute) {
+            audioRecord.stop();
+        } else {
+            audioRecord.startRecording();
+        }
+    }
+
+    public boolean isMute() {
+        return mIsMute;
+    }
+
     public void setSoftAudioFilter(BaseSoftAudioFilter baseSoftAudioFilter) {
         softAudioCore.setAudioFilter(baseSoftAudioFilter);
     }
+
     public BaseSoftAudioFilter acquireSoftAudioFilter() {
         return softAudioCore.acquireAudioFilter();
     }

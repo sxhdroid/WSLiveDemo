@@ -189,6 +189,10 @@ public class StreamLiveCameraView extends FrameLayout {
         }
     }
 
+    public boolean toggleMute() {
+        return resClient.toggleMute();
+    }
+
     /**
      * 摄像头焦距 [0.0f,1.0f]
      */

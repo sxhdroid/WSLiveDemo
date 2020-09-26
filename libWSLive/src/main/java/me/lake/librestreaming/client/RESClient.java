@@ -399,6 +399,11 @@ public class RESClient {
         return videoClient.toggleFlashLight();
     }
 
+    public boolean toggleMute() {
+        audioClient.toggleMute();
+        return audioClient.isMute();
+    }
+
     public void takeScreenShot(RESScreenShotListener listener) {
         videoClient.takeScreenShot(listener);
     }
