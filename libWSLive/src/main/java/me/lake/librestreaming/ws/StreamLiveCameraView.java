@@ -44,8 +44,6 @@ public class StreamLiveCameraView extends FrameLayout {
 
     private MediaRecordCallBack callBack;
 
-    private boolean isRecordingSegment;
-
     public StreamLiveCameraView(Context context) {
         super(context);
         this.mContext=context;
@@ -138,12 +136,16 @@ public class StreamLiveCameraView extends FrameLayout {
      */
     private MediaMuxerWrapper mMuxer;
     private boolean isRecord = false;
+
     public void startRecord(){
+        startRecord(null);
+    }
+
+    public void startRecord(String path){
         if(resClient != null){
             resClient.setNeedResetEglContext(true);
             try {
-                // if you record audio only, ".m4a" is also OK.
-                mMuxer = new MediaMuxerWrapper(".mp4");
+                mMuxer = new MediaMuxerWrapper(path);
                 new MediaVideoEncoder(mMuxer, mMediaEncoderListener, StreamAVOption.recordVideoWidth, StreamAVOption.recordVideoHeight);
                 new MediaAudioEncoder(mMuxer, mMediaEncoderListener);
 
@@ -157,17 +159,11 @@ public class StreamLiveCameraView extends FrameLayout {
         }
     }
 
-    public void stopSegmentRecord() {
-        isRecordingSegment = true;
-        mMuxer.stopRecordingSegment();
-    }
-
     /**
      * 停止录制
      */
     public String stopRecord() {
         isRecord = false;
-        isRecordingSegment = false;
         if (mMuxer != null) {
             String path = mMuxer.getOutputPath();
             mMuxer.stopRecording();
@@ -394,7 +390,7 @@ public class StreamLiveCameraView extends FrameLayout {
 
         @Override
         public void onStart(MediaEncoder encoder) {
-            if (isRecordingSegment || callBack == null) {
+            if (callBack == null) {
                 return;
             }
             if (encoder instanceof MediaVideoEncoder) {
@@ -405,16 +401,11 @@ public class StreamLiveCameraView extends FrameLayout {
         @Override
         public void onStopped(final MediaEncoder encoder) {
             if (encoder instanceof MediaVideoEncoder) {
-                if (resClient != null && !isRecordingSegment) {
+                if (resClient != null) {
                     resClient.setVideoEncoder(null);
                 }
                 if (callBack != null) {
-                    callBack.onStop(encoder.getOutputPath(), isRecordingSegment);
-                }
-                // 自动录制下一个片段
-                if (isRecordingSegment) {
-                    mMuxer.resetOutputPath(null);
-                    mMuxer.startRecording();
+                    callBack.onStop(encoder.getOutputPath());
                 }
             }
         }
@@ -430,8 +421,7 @@ public class StreamLiveCameraView extends FrameLayout {
          * 录制停止回调
          *
          * @param filePath  文件路径
-         * @param isSegment 是否是分段自动停止
          */
-        void onStop(String filePath, boolean isSegment);
+        void onStop(String filePath);
     }
 }

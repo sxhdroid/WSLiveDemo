@@ -4,7 +4,6 @@ import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.os.Environment;
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
@@ -31,26 +30,22 @@ public class MediaMuxerWrapper {
 
 	/**
 	 * Constructor
-	 * @param ext extension of output file
+	 * @param outputPath output file path
 	 * @throws IOException
 	 */
-	public MediaMuxerWrapper(String ext) throws IOException {
-		resetOutputPath(ext);
+	public MediaMuxerWrapper(String outputPath) throws IOException {
+		if (outputPath == null) {
+			try {
+				this.mOutputPath = getCaptureFile(Environment.DIRECTORY_MOVIES, ".mp4").getAbsolutePath();
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+			}
+		} else  {
+			this.mOutputPath = outputPath;
+		}
 		mMediaMuxer = new MediaMuxer(mOutputPath, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4);
 		mEncoderCount = mStatredCount = 0;
 		mIsStarted = false;
-	}
-
-	public void resetOutputPath(String ext) {
-		if (TextUtils.isEmpty(ext)) {
-			ext = ".mp4";
-		}
-		try {
-			mOutputPath = getCaptureFile(Environment.DIRECTORY_MOVIES, ext).getAbsolutePath();
-			//mOutputPath =newTmpDir("Movies");/* getCaptureFile(Environment.DIRECTORY_MOVIES, ext).toString();*/
-		} catch (NullPointerException e) {
-			throw new RuntimeException("This app has no permission of writing external storage");
-		}
 	}
 
 	public String getOutputPath() {
